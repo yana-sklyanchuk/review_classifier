@@ -3,14 +3,14 @@ import openai
 
 app = Flask(__name__)
 
-# Initialize OpenAI API
+# Инициализируйте API OpenAI
 openai.api_key = 'YOUR_OPENAI_API_KEY'
 
 @app.route('/feedback', methods=['POST'])
 def feedback():
     user_input = request.json.get('input')
     
-    # Process the user input and generate a response
+    # Обработать ввод пользователя и сгенерировать ответ
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[

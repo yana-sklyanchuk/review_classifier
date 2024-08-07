@@ -9,13 +9,13 @@ app = Flask(__name__)
 access_token = "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"
 
 
-# Load the trained sentiment analysis model and tokenizer
-model_path = "yana-sklyanchuk/restaurant_reviews"  # Update this to your model path
+# Загрузка обученной модели анализа настроений и токенизатора
+model_path = "yana-sklyanchuk/restaurant_reviews"  
 model = AutoModelForSequenceClassification.from_pretrained("yana-sklyanchuk/restaurant_reviews", token=access_token)
 tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
 
 
-# Initialize the SQLite database
+# Инициализация базы данных SQLite
 def init_db():
     conn = sqlite3.connect('reviews.db')
     cursor = conn.cursor()
@@ -36,28 +36,28 @@ def classify_reviews():
     data = request.get_json()
     reviews = data.get('reviews', [])
     
-    # Check if reviews are provided
+    # Провер ка наличия отзывов
     if not reviews:
         return jsonify({"error": "No reviews provided"}), 400
     
-    # Preprocess and tokenize the reviews
+    # Предварительная обработка и токенизация отзывов
     inputs = tokenizer(reviews, padding=True, truncation=True, return_tensors='pt', max_length=32)
     
-    # Classify the reviews
+    # Классификация отзывов
     with torch.no_grad():
         outputs = model(**inputs)
     
-    # Get predictions
+    # Получить прогнозы
     predictions = torch.argmax(outputs.logits, dim=1).tolist()
     
-    # Map predictions to sentiment labels
-    id2label = {0: 'Негативные', 1: 'Позитивные'}  # Adjust labels as needed
+    # Сопоставление прогнозов с метками настроений
+    id2label = {0: 'Негативные', 1: 'Позитивные'}  # При необходимости откорректируйте метки
     sentiment_labels = [id2label[prediction] for prediction in predictions]
     
-    # Save results to the database
+    # Сохранение результатов в базу данных
     save_to_db(reviews, sentiment_labels)
     
-    # Prepare the response
+    # Подготовка ответа
     response = {
         'sentiments': sentiment_labels
     }

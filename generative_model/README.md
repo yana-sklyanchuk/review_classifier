@@ -26,13 +26,13 @@ from transformers import pipeline
 access_token = "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"
 model_name = "yana-sklyanchuk/dialogue_reviews" 
 
-# Load the fine-tuned model and tokenizer from the Hugging Face Hub
+# Загрузите модель и токенизатор из Hugging Face Hub
 generator = pipeline('text-generation', model=model_name, token = access_token)
-# Define a prompt for text generation
+# Определите подсказку для генерации текста
 prompt = "The restaurant had"
-# Generate text based on the prompt
+# Генерировать текст на основе подсказки
 generated_texts = generator(prompt, max_length=50, num_return_sequences=3)
-# Print the generated texts
+# Вывод сгенерированных текстов
 for i, text in enumerate(generated_texts):
     print(f"Generated Text {i + 1}: {text['generated_text']}")
 ```
